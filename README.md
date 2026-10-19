@@ -160,14 +160,13 @@ Edit `config/connector.php` to customize allowed operations:
 
 ```php
 'allowed_operations' => [
-    'app:info',
     'cache:clear',
     'config:clear',
     'route:clear',
     'view:clear',
     'event:clear',
     'optimize:clear',
-    'migration:status',
+    'migrate:status',
 ],
 ```
 
