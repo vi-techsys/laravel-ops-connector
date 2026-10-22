@@ -19,7 +19,7 @@ class QueueController extends Controller
     /**
      * Inspect queue status.
      */
-    public function inspect(): JsonResponse
+    public function inspect(Request $request): JsonResponse
     {
         if (!config('connector.enable_operations', true)) {
             return response()->json([
@@ -29,7 +29,8 @@ class QueueController extends Controller
             ], 403);
         }
 
-        $result = $this->monitor->inspect();
+        $queuesParam = $request->input('queues');
+        $result = $this->monitor->inspect($queuesParam);
 
         if (!$result['success']) {
             return response()->json([

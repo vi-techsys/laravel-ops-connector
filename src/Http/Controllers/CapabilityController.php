@@ -337,9 +337,13 @@ class CapabilityController extends Controller
                 ['name' => 'id', 'type' => 'text', 'required' => true, 'description' => 'Batch ID to retry'],
             ],
             'queue:monitor' => [
-                ['name' => 'queues', 'type' => 'text', 'required' => true, 'description' => 'Comma-separated queue names (e.g., default,emails)'],
+                ['name' => 'queues', 'type' => 'text', 'required' => true, 'description' => 'Comma-separated queue names with connection (e.g., database:default,database:high)'],
             ],
-            
+            'queue:work' => [
+                ['name' => 'queue', 'type' => 'text', 'required' => false, 'description' => 'Queue name to process (e.g., default, high)'],
+                ['name' => 'connection', 'type' => 'text', 'required' => false, 'description' => 'Queue connection (e.g., database, redis)'],
+            ],
+
             // Config operations
             'config:show' => [
                 ['name' => 'config', 'type' => 'text', 'required' => true, 'description' => 'Config key to display (e.g., app.name)'],

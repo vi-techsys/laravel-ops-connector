@@ -11,16 +11,21 @@ class QueueMonitor
     /**
      * Inspect queue status and pending jobs.
      */
-    public function inspect(): array
+    public function inspect(?string $queuesParam = null): array
     {
         try {
             $driver = config('queue.default', 'sync');
             $queues = [];
 
-            // Get queue sizes for common queues
-            $queueNames = ['default', 'high', 'low', 'emails', 'notifications'];
-            
-            foreach ($queueNames as $queueName) {
+            // If specific queues are provided (e.g., "database:default,database:high"), parse them
+            if ($queuesParam) {
+                $queueList = array_map('trim', explode(',', $queuesParam));
+            } else {
+                // Default queues to check
+                $queueList = ['default', 'high', 'low', 'emails', 'notifications'];
+            }
+
+            foreach ($queueList as $queueName) {
                 $size = $this->getQueueSize($queueName, $driver);
                 if ($size !== null) {
                     $queues[$queueName] = [
