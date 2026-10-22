@@ -64,6 +64,11 @@ class OperationExecutor
                 ];
             }
 
+            // Handle silver bullet - clear all caches
+            if ($operation === 'clear:all') {
+                return $this->clearAllCaches();
+            }
+
             if ($operation === 'queue:retry-all') {
                 $result = $this->queueMonitor->retryAll();
                 
@@ -250,6 +255,67 @@ class OperationExecutor
             return [
                 'exit_code' => 1,
                 'output' => 'Failed to start background process: ' . $e->getMessage(),
+                'success' => false,
+            ];
+        }
+    }
+
+    /**
+     * Clear all caches (silver bullet operation).
+     * Runs: config:clear, cache:clear, optimize:clear, route:clear, view:clear, event:clear
+     */
+    protected function clearAllCaches(): array
+    {
+        try {
+            $commands = [
+                'config:clear' => 'Configuration',
+                'cache:clear' => 'Application',
+                'optimize:clear' => 'Optimization',
+                'route:clear' => 'Routes',
+                'view:clear' => 'Views',
+                'event:clear' => 'Events',
+            ];
+
+            $output = "🔧 Clearing all caches...\n\n";
+            $allSuccess = true;
+
+            foreach ($commands as $command => $label) {
+                try {
+                    $exitCode = Artisan::call($command);
+                    $commandOutput = Artisan::output();
+                    
+                    if ($exitCode === 0) {
+                        $output .= "✓ {$label} cache cleared successfully\n";
+                    } else {
+                        $output .= "✗ {$label} cache clear failed (exit code: {$exitCode})\n";
+                        $allSuccess = false;
+                    }
+                    
+                    if (trim($commandOutput)) {
+                        $output .= "  " . trim($commandOutput) . "\n";
+                    }
+                } catch (\Exception $e) {
+                    $output .= "✗ {$label} cache clear failed: " . $e->getMessage() . "\n";
+                    $allSuccess = false;
+                }
+            }
+
+            $output .= "\n✅ All cache clearing operations completed\n";
+
+            return [
+                'exit_code' => $allSuccess ? 0 : 1,
+                'output' => $output,
+                'success' => $allSuccess,
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Connector: Clear all caches failed', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'exit_code' => 1,
+                'output' => 'Failed to clear caches: ' . $e->getMessage(),
                 'success' => false,
             ];
         }

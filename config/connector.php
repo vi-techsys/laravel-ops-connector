@@ -129,6 +129,9 @@ return [
         'schedule:inspect',
         'schedule:history',
         'schedule:run-task',
+
+        // Silver Bullet - Clear Everything
+        'clear:all',
     ],
 
     /*
