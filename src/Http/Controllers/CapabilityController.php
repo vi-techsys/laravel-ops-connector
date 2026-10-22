@@ -128,6 +128,9 @@ class CapabilityController extends Controller
             'schedule:inspect' => 'Inspect Scheduled Tasks',
             'schedule:history' => 'View Scheduler History',
             'schedule:run-task' => 'Run Scheduled Task',
+
+            // Silver Bullet
+            'clear:all' => '🔧 Clear All Caches (Silver Bullet)',
         ];
 
         return $names[$operation] ?? ucfirst(str_replace(':', ' ', $operation));
@@ -204,6 +207,9 @@ class CapabilityController extends Controller
             'log:clear' => 'Clear all log files',
             'log:view' => 'View recent log entries with filtering',
             'log:statistics' => 'View log statistics and summary',
+
+            // Silver Bullet
+            'clear:all' => 'Clear ALL caches at once (config, cache, optimize, route, view, event) - use when things go wrong',
         ];
 
         return $descriptions[$operation] ?? "Execute {$operation}";
@@ -271,6 +277,7 @@ class CapabilityController extends Controller
             'log:clear' => 'medium',
             'log:view' => 'none',
             'log:statistics' => 'none',
+            'clear:all' => 'low',
             
             // Medium risk operations
             'queue:clear' => 'medium',
