@@ -46,7 +46,17 @@ class OperationExecutor
                 $limit = $parameters['limit'] ?? 50;
                 $offset = $parameters['offset'] ?? 0;
                 $result = $this->queueMonitor->getFailedDetails($limit, $offset);
-                
+
+                return [
+                    'exit_code' => $result['success'] ? 0 : 1,
+                    'output' => $result['success'] ? json_encode($result['data'], JSON_PRETTY_PRINT) : ($result['error'] ?? 'Failed'),
+                    'success' => $result['success'],
+                ];
+            }
+
+            if ($operation === 'queue:failed') {
+                $result = $this->queueMonitor->getFailedDetails(50, 0);
+
                 return [
                     'exit_code' => $result['success'] ? 0 : 1,
                     'output' => $result['success'] ? json_encode($result['data'], JSON_PRETTY_PRINT) : ($result['error'] ?? 'Failed'),

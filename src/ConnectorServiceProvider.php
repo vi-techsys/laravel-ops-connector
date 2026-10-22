@@ -4,6 +4,7 @@ namespace LaravelOps\Connector;
 
 use Illuminate\Support\ServiceProvider;
 use LaravelOps\Connector\Http\Middleware\ValidateSignature;
+use LaravelOps\Connector\Services\QueueMonitor;
 
 class ConnectorServiceProvider extends ServiceProvider
 {
@@ -13,6 +14,11 @@ class ConnectorServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/connector.php', 'connector');
+
+        // Register QueueMonitor as singleton for better performance
+        $this->app->singleton(QueueMonitor::class, function ($app) {
+            return new QueueMonitor();
+        });
     }
 
     /**
